@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "213237037131",
+    "project_id": "ecommerce-cca4a"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:213237037131:android:9d4b14147c44d49e",
+        "android_client_info": {
+          "package_name": "com.example.shivr.e_commerce"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "213237037131-cktc3til7rh0fh3up1vcs0rrr48u5qqo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.shivr.e_commerce",
+            "certificate_hash": "84a5eece9c574813500050218f3d3eea05f0fcda"
+          }
+        },
+        {
+          "client_id": "213237037131-sn0cfb2hg4plrvqaujh9u06oc21kf2hi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwu5jx16mBb48jhQgA7bvKOB9dr7Jy_sw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
