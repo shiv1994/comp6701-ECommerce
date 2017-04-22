@@ -17,8 +17,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -37,6 +39,8 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient;
     private TextView name, email;
     private ImageView userImage;
+    private Button buttonViewProds;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +73,15 @@ public class MainActivity extends AppCompatActivity
         name = (TextView)header.findViewById(R.id.textViewUserName);
         email = (TextView)header.findViewById(R.id.textViewUserEmail);
         userImage = (ImageView) header.findViewById(R.id.imageViewUserImage);
+
+        buttonViewProds = (Button) findViewById(R.id.buttonViewAllProds);
+        buttonViewProds.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(view.getContext() ,"Switching!", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(view.getContext() , ViewAllProducts.class));
+            }
+        });
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()

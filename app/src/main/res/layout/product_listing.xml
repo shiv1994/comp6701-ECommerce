@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="150dp">
+
+    <TextView
+        android:id="@+id/productPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="19dp"
+        android:text="Price"
+        android:layout_below="@+id/productName"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/imageViewProduct" />
+
+    <ImageView
+        android:id="@+id/imageViewProduct"
+        android:layout_width="146dp"
+        android:layout_height="121dp"
+        app:srcCompat="@drawable/cart" />
+
+    <TextView
+        android:id="@+id/productName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Product Name"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/imageViewProduct" />
+
+    <TextView
+        android:id="@+id/productDescSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="21dp"
+        android:text="Little Desc"
+        android:layout_below="@+id/productPrice"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/imageViewProduct" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/imageViewProduct"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/darker_gray"/>
+
+
+</RelativeLayout>
