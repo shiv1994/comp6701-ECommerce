@@ -11,7 +11,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -25,6 +24,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.shivr.e_commerce.UI.view_all_products;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -140,7 +140,6 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             Log.i("Hello","Hello");
-//            launchFragment(view_all_products.getInstance());
             launchFragment(new view_all_products());
         } else if (id == R.id.nav_gallery) {
 

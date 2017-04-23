@@ -1,14 +1,29 @@
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.shivr.e_commerce.view_all_products">
+    android:layout_height="wrap_content"
+    tools:context="com.example.shivr.e_commerce.UI.view_all_products"
+    android:orientation="vertical"
+    android:weightSum="1">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <SearchView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent" />
 
-</FrameLayout>
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@id/recyclerAllProds"
+        android:scrollbars="vertical"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintBottom_creator="1"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        tools:layout_constraintLeft_creator="1"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="10.28" />
+
+</LinearLayout>
