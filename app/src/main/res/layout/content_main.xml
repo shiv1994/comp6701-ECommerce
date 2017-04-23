@@ -8,4 +8,11 @@
     tools:context="com.example.shivr.e_commerce.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/content_frame">
+
+    </RelativeLayout>
+
 </android.support.constraint.ConstraintLayout>
