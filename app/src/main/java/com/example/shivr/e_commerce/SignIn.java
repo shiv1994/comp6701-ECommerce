@@ -38,6 +38,7 @@ public class SignIn extends AppCompatActivity implements
         //Determining if user was logged in already and if so, the main screen will be displayed.
         sharedPreferences = Utils.getSharedPrefs(this);
         if(Utils.checkBooleanSharedPrefs(sharedPreferences, Utils.signedInBoolKey)){
+            this.finish();
             startActivity(new Intent(this, MainActivity.class));
         }
 
