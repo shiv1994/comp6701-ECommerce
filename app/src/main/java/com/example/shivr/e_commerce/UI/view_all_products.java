@@ -5,9 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,8 +36,10 @@ public class view_all_products extends Fragment {
     private RecyclerView recyclerView;
     private ProductAdapter mAdapter;
     private List<Product> productList;
+    private List<Product> productListFiltered;
     private LayoutManagerType layoutManagerType;
     private RecyclerView.LayoutManager layoutManager;
+    private SearchView searchView;
 
     public view_all_products() {
         // Required empty public constructor
@@ -61,10 +63,35 @@ public class view_all_products extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_view_all_products, container, false);
 
+        searchView = (SearchView) rootView.findViewById(R.id.searchBarAllProds);
+
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerAllProds);
         setRecyclerViewLayoutManager();
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                productListFiltered = new ArrayList<Product>();
+                query = query.toLowerCase();
+                for(Product p: productList){
+                    if(p.getName().toLowerCase().contains(query)){
+                        productListFiltered.add(p);
+                    }
+                }
+                mAdapter = new ProductAdapter(productListFiltered);
+                recyclerView.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
+                return true;
+            }
+        });
+
         // Inflate the layout for this fragment
         return rootView;
     }

@@ -138,19 +138,10 @@ public class MainActivity extends AppCompatActivity
 
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            Log.i("Hello","Hello");
+        if (id == R.id.nav_slideshow) {
             launchFragment(new view_all_products());
-        } else if (id == R.id.nav_gallery) {
-
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_signOut) {
+        }
+        else if (id == R.id.nav_signOut) {
             this.signOut();
         }
 
