@@ -19,16 +19,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -83,6 +78,8 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient;
     private TextView name, email;
     private ImageView userImage;
+    private Button buttonViewProds;
+
     private CertificateFactory crtFac;
     private InputStream inputStream;
     private Certificate certificate;
@@ -121,6 +118,15 @@ public class MainActivity extends AppCompatActivity
         name = (TextView)header.findViewById(R.id.textViewUserName);
         email = (TextView)header.findViewById(R.id.textViewUserEmail);
         userImage = (ImageView) header.findViewById(R.id.imageViewUserImage);
+
+        buttonViewProds = (Button) findViewById(R.id.buttonViewAllProds);
+        buttonViewProds.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(view.getContext() ,"Switching!", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(view.getContext() , ViewAllProducts.class));
+            }
+        });
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()

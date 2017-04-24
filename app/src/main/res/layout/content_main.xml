@@ -8,4 +8,12 @@
     tools:context="com.example.shivr.e_commerce.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
+
+    <Button
+        android:id="@+id/buttonViewAllProds"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View All Products"
+        tools:layout_editor_absoluteX="148dp"
+        tools:layout_editor_absoluteY="231dp" />
 </android.support.constraint.ConstraintLayout>
