@@ -3,10 +3,12 @@ package com.example.shivr.e_commerce;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -19,7 +21,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -27,6 +36,43 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
@@ -37,6 +83,12 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient;
     private TextView name, email;
     private ImageView userImage;
+    private CertificateFactory crtFac;
+    private InputStream inputStream;
+    private Certificate certificate;
+    private KeyStore keystore;
+    private SSLContext context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +139,8 @@ public class MainActivity extends AppCompatActivity
             email.setText(googleSignInAccount.getEmail());
             userImage.setImageURI(googleSignInAccount.getPhotoUrl());
         }
+
+        new MainActivity.HttpRequestTask().execute();
     }
 
     @Override
@@ -161,5 +215,135 @@ public class MainActivity extends AppCompatActivity
                         startActivity(new Intent(context, SignIn.class));
                     }
                 });
+    }
+
+    private class HttpRequestTask extends AsyncTask<Void, Void, String>{
+
+        protected String doInBackground(Void... voids){
+
+            HttpsURLConnection urlConnection=null;
+            String resp="";
+            SSLHelper sslHelper = SSLHelper.getInstance(MainActivity.this);
+
+            try {
+                String endpoint = "/wc-auth/v1/authorize";
+                String queryString = "app_name=test&scope=read_write&user_id=" + googleSignInAccount.getEmail()
+                        + "&return_url=https://67.205.172.180/&callback_url" +
+                        "=https://67.205.172.180/handle_keys.php";
+
+                // Tell the URLConnection to use a SocketFactory from our SSLContext
+                URL url = new URL("https://67.205.172.180" + endpoint + "?" + queryString);
+                urlConnection = (HttpsURLConnection) url.openConnection();
+                urlConnection.setSSLSocketFactory(sslHelper.getSSLContext().getSocketFactory());
+
+//                // create JSON object to hold paramaters to be passed
+//                JSONObject params = new JSONObject();
+//                params.putOpt("app_name", new String("test"));
+//                params.putOpt("scope", new String("read_write"));
+//                params.putOpt("user_id", googleSignInAccount.getDisplayName());
+//                params.putOpt("return_url", new String("https://67.205.172.180/return-page"));
+//                params.putOpt("callback_url", new String("https://67.205.172.180/callback-endpoint"));
+
+                // configuring connection to allow data to be posted
+                //urlConnection.setDoOutput(true);
+                // set content length to avoid internal buffering
+                //urlConnection.setFixedLengthStreamingMode(params.toString().getBytes().length);
+                Log.v("http", "connecting");
+
+                urlConnection.setHostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String s, SSLSession sslSession) {
+                        return true;
+                    }
+                });
+                urlConnection.connect();
+
+                Log.v("http", "connected");
+
+                resp = Integer.toString(urlConnection.getResponseCode());
+            }
+            catch(SSLPeerUnverifiedException e){
+                e.printStackTrace();
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }
+            finally {
+                if(urlConnection != null)
+                    urlConnection.disconnect();
+            }
+
+//            // pulls down product info
+//            try {
+//                // Tell the URLConnection to use a SocketFactory from our SSLContext
+//                URL url = new URL("https://67.205.172.180/wp-json/wc/v2/products");
+//                urlConnection = (HttpsURLConnection) url.openConnection();
+//                urlConnection.setSSLSocketFactory(sslHelper.getSSLContext().getSocketFactory());
+//
+//                // credentials
+//                String user = "ck_970486c965566c58a881f7501f244bc77bebd732";
+//                String pass = "cs_070469e8a858dd957792d25fe51ec8234aedabbf";
+//                String auth = user + ":" + pass;
+//                byte [] encoded  = Base64.encode(auth.getBytes(),Base64.NO_WRAP);
+//                urlConnection.setRequestProperty("Authorization", "Basic " +
+//                        new String(encoded));
+//
+//                urlConnection.setHostnameVerifier(new HostnameVerifier() {
+//                    @Override
+//                    public boolean verify(String s, SSLSession sslSession) {
+//
+//                        return true;
+//                    }
+//                });
+//                urlConnection.connect();
+//
+//                if(urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK){
+//                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+//
+//                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+//                    StringBuilder result = new StringBuilder();
+//                    String line;
+//                    while ((line = reader.readLine()) != null) {
+//                        result.append(line);
+//                    }
+//                    resp = result.toString();
+//                }
+//            }
+//            catch(SSLPeerUnverifiedException e){
+//                e.printStackTrace();
+//            }
+//            catch (IOException e){
+//                e.printStackTrace();
+//            }
+//            finally {
+//                if(urlConnection != null)
+//                    urlConnection.disconnect();
+//            }
+
+            return resp;
+        }
+
+        protected void onPostExecute(String response){
+//            JSONArray jsonArray=null;
+//            try{
+//                jsonArray = new JSONArray(response);
+//
+//                int x, id;
+//                String name;
+//
+//                for(x=0;x<jsonArray.length();x++){
+//                    JSONObject temp = jsonArray.getJSONObject(x);
+//                    id = temp.getInt("id");
+//                    name = temp.getString("name");
+//
+//                    System.out.println("ID: " + id + " Name: " + name);
+//                }
+//            }
+//            catch (JSONException e){
+//                e.printStackTrace();
+//            }
+
+            Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
+        }
     }
 }
