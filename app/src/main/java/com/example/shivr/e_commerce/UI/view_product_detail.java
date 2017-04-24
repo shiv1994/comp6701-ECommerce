@@ -17,19 +17,28 @@ import com.example.shivr.e_commerce.R;
  * to handle interaction events.
  */
 public class view_product_detail extends Fragment {
-
+    private Integer productID;
     private OnFragmentInteractionListener mListener;
 
     public view_product_detail() {
         // Required empty public constructor
     }
 
+    public void setProductID(Integer productID) {
+        this.productID = productID;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_view_product_detail, container, false);
+    }
+
+    public static view_product_detail getInstance (Integer ID){
+        view_product_detail product_detail = new  view_product_detail();
+        product_detail.setProductID(ID);
+        return  product_detail;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

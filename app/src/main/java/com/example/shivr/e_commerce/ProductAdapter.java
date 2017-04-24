@@ -42,10 +42,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.i("Position", "" + getAdapterPosition());
                     FragmentManager fragmentManager = ((MainActivity)itemView.getContext()).getSupportFragmentManager();
                     fragmentManager.beginTransaction()
-                            .add(R.id.content_frame, new view_product_detail())
+                            .replace(R.id.content_frame, view_product_detail.getInstance(getAdapterPosition()))
                             .addToBackStack("tag")
                             .commit();
                 }
