@@ -1,23 +1,45 @@
 package com.example.shivr.e_commerce.UI;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.shivr.e_commerce.Product;
 import com.example.shivr.e_commerce.ProductAdapter;
 import com.example.shivr.e_commerce.R;
+import com.example.shivr.e_commerce.SSLHelper;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
 
 
 /**
@@ -52,9 +74,12 @@ public class view_all_products extends Fragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         productList = new ArrayList<Product>();
-        productList.add(new Product("Apple MacBook", 678.99, "Fast Laptop"));
-        productList.add(new Product("Apple MacBook PRO", 1678.99, "Fastest Laptop"));
-        mAdapter = new ProductAdapter(productList);
+        HttpRequestTask httpRequestTask = new HttpRequestTask(getActivity());
+
+//        productList.add(new Product("Apple MacBook", 678.99, "Fast Laptop"));
+//        productList.add(new Product("Apple MacBook PRO", 1678.99, "Fastest Laptop"));
+
+        httpRequestTask.execute();
     }
 
 
@@ -147,5 +172,112 @@ public class view_all_products extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    private class HttpRequestTask extends AsyncTask<Void, Void, String> {
+
+        private Context context;
+        private ProgressDialog progressDialog;
+
+        public HttpRequestTask(Context context){
+            this.context = context;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = ProgressDialog.show(context, "Notice", "Loading Products...", true);
+        }
+
+        protected String doInBackground(Void... voids){
+
+            HttpsURLConnection urlConnection=null;
+            String resp="";
+            SSLHelper sslHelper = SSLHelper.getInstance(context);
+
+            // pulls down product info
+            try {
+                // Tell the URLConnection to use a SocketFactory from our SSLContext
+                URL url = new URL("https://67.205.172.180/wp-json/wc/v2/products");
+                urlConnection = (HttpsURLConnection) url.openConnection();
+                urlConnection.setSSLSocketFactory(sslHelper.getSSLContext().getSocketFactory());
+
+                // credentials
+                String user = "ck_970486c965566c58a881f7501f244bc77bebd732";
+                String pass = "cs_070469e8a858dd957792d25fe51ec8234aedabbf";
+                String auth = user + ":" + pass;
+                byte [] encoded  = Base64.encode(auth.getBytes(), Base64.NO_WRAP);
+                urlConnection.setRequestProperty("Authorization", "Basic " +
+                        new String(encoded));
+
+                urlConnection.setHostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String s, SSLSession sslSession) {
+
+                        return true;
+                    }
+                });
+                urlConnection.connect();
+
+                if(urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK){
+                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder result = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        result.append(line);
+                    }
+                    resp = result.toString();
+                }
+            }
+            catch(SSLPeerUnverifiedException e){
+                e.printStackTrace();
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }
+            finally {
+                if(urlConnection != null)
+                    urlConnection.disconnect();
+            }
+
+            return resp;
+        }
+
+        protected void onPostExecute(String response){
+            JSONArray jsonArray=null;
+            try{
+                jsonArray = new JSONArray(response);
+
+                int x, id;
+                String name;
+                String price;
+                String desc;
+                JSONArray imgArr;
+                JSONObject imgObj;
+
+                for(x=0;x<jsonArray.length();x++){
+                    JSONObject temp = jsonArray.getJSONObject(x);
+                    id = temp.getInt("id");
+                    name = temp.getString("name");
+                    price = temp.getString("price");
+                    desc = temp.getString("short_description");
+
+                    imgArr = temp.getJSONArray("images");
+                    imgObj = imgArr.getJSONObject(0);
+
+                    productList.add(new Product(name, Double.parseDouble(price), desc, imgObj.getString("src")));
+                }
+
+                mAdapter = new ProductAdapter(productList);
+                recyclerView.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
+
+                progressDialog.dismiss();
+            }
+            catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
     }
 }

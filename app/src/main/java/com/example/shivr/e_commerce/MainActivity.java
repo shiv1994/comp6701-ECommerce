@@ -31,6 +31,7 @@ import android.widget.TextView;
 import com.example.shivr.e_commerce.UI.map;
 import com.example.shivr.e_commerce.UI.view_all_products;
 import com.example.shivr.e_commerce.UI.view_product_detail;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -59,6 +60,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Fresco.initialize(this);
 
         setContentView(R.layout.activity_main);
 
@@ -236,8 +239,7 @@ public class MainActivity extends AppCompatActivity
 
     private void getLocation(){
         if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                    mGoogleApiClient);
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             if (mLastLocation != null) {
                 Log.i("Lat",""+String.valueOf(mLastLocation.getLatitude()));
                 Log.i("Long",""+String.valueOf(mLastLocation.getLongitude()));

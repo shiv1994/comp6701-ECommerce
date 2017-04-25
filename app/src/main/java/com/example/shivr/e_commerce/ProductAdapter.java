@@ -1,19 +1,18 @@
 package com.example.shivr.e_commerce;
 
-import android.content.Context;
-import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.shivr.e_commerce.UI.view_product_detail;
+import com.facebook.drawee.view.DraweeView;
+import com.facebook.drawee.view.SimpleDraweeView;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -31,14 +30,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
     public class MyViewHolder extends RecyclerView.ViewHolder{
 
         public TextView title, price, desc;
-        public ImageView imageView;
+        public SimpleDraweeView imageDraweeView;
 
         public MyViewHolder(final View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.productName);
             price = (TextView) itemView.findViewById(R.id.productPrice);
             desc = (TextView) itemView.findViewById(R.id.productDescSmall);
-            imageView = (ImageView) itemView.findViewById(R.id.imageViewProduct);
+            imageDraweeView = (SimpleDraweeView) itemView.findViewById(R.id.imageViewProduct);
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -59,10 +59,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
 
     public void onBindViewHolder(ProductAdapter.MyViewHolder holder, int position) {
         Product product = productList.get(position);
-        holder.title.setText(product.getName());
-        holder.desc.setText(product.getDescription());
-        holder.price.setText(String.valueOf(product.getPrice()));
-        holder.imageView.setImageResource(R.drawable.laptop);
+        Uri imageUri = Uri.parse(product.getImgRef());
+        holder.title.setText("Name: "+product.getName());
+        holder.desc.setText("Description: "+product.getDescription());
+        holder.price.setText("Price: $"+String.valueOf(product.getPrice()));
+        holder.imageDraweeView.setImageURI(imageUri);
     }
 
 
