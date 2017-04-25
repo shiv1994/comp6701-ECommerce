@@ -14,6 +14,7 @@ public class Utils {
     private static String sharedPrefKey = "sharedPrefKey";
     private static String signInInfo = "signInInfo";
     public static String signedInBoolKey = "signedIn";
+    public static String userSelectedLocationEnable = "userSelectLocationEnable";
 
     public static SharedPreferences getSharedPrefs(Context context){
         return context.getSharedPreferences(sharedPrefKey, Context.MODE_PRIVATE);
