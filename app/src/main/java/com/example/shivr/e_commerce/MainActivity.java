@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.shivr.e_commerce.UI.map;
 import com.example.shivr.e_commerce.UI.view_all_products;
@@ -39,10 +40,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.LocationServices;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, view_all_products.OnFragmentInteractionListener, view_product_detail.OnFragmentInteractionListener, GoogleApiClient.ConnectionCallbacks, map.OnFragmentInteractionListener {
@@ -55,7 +52,6 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient;
     private TextView name, email;
     private ImageView userImage;
-    private Location mLastLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +89,6 @@ public class MainActivity extends AppCompatActivity
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addConnectionCallbacks(this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .addApi(LocationServices.API)
                 .build();
 
         googleSignInAccount = Utils.getUserInfo(sharedPreferences);
@@ -122,7 +117,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.i("Connected!","Connected!");
-        getLocation();
     }
 
     @Override
@@ -205,7 +199,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-
     }
 
     private void launchFragment(Fragment fragment){
@@ -222,28 +215,19 @@ public class MainActivity extends AppCompatActivity
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.i("Permissions","Granted");
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    getLocation();
+                    //Start service.
+                    Intent intent = new Intent(this, GeoFenceLocationService.class);
+                    startService(intent);
                 }
                 else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
+                    Toast.makeText(getApplicationContext(),"Location Awareness Not Enabled!",Toast.LENGTH_LONG);
                 }
                 return;
             }
             // other 'case' lines to check for other
             // permissions this app might request
-        }
-    }
-
-    private void getLocation(){
-        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if (mLastLocation != null) {
-                Log.i("Lat",""+String.valueOf(mLastLocation.getLatitude()));
-                Log.i("Long",""+String.valueOf(mLastLocation.getLongitude()));
-            }
         }
     }
 
@@ -271,19 +255,5 @@ public class MainActivity extends AppCompatActivity
             // app-defined int constant. The callback method gets the
             // result of the request.
         }
-    }
-
-    private void startGeofence() {
-
-        Geofence.Builder builder = new Geofence.Builder();
-        Geofence mGeofence = builder.setRequestId("Store1")
-                .setCircularRegion(Double.parseDouble("10.64102"), Double.parseDouble(" -61.40052"), 100 )
-                .setTransitionTypes( Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT )
-                .setExpirationDuration( Geofence.NEVER_EXPIRE )
-                .build();
-
-        ArrayList<Geofence> geofences = new ArrayList<Geofence>();
-        geofences.add( mGeofence );
-//        .addGeofences( geofences, mPendingIntent, this );
     }
 }
