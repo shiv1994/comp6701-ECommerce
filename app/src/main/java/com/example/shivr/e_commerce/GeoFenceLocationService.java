@@ -31,6 +31,7 @@ public class GeoFenceLocationService extends IntentService implements GoogleApiC
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         enableLocationDetection();
+        Log.i("Location","Detection Enabled.");
     }
 
     @Override
@@ -48,8 +49,8 @@ public class GeoFenceLocationService extends IntentService implements GoogleApiC
 
     }
 
-    public GeoFenceLocationService(String name) {
-        super(name);
+    public GeoFenceLocationService() {
+        super("test");
     }
 
     @Override
@@ -60,7 +61,6 @@ public class GeoFenceLocationService extends IntentService implements GoogleApiC
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addApi(LocationServices.API)

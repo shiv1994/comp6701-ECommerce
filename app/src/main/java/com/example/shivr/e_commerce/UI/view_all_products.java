@@ -387,7 +387,6 @@ public class view_all_products extends Fragment {
                 mAdapter = new ProductAdapter(productList);
                 recyclerView.setAdapter(mAdapter);
                 mAdapter.notifyDataSetChanged();
-
                 progressDialog.dismiss();
 
                 saveProductData(response);

@@ -1,12 +1,9 @@
 package com.example.shivr.e_commerce;
 
-
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -30,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shivr.e_commerce.UI.map;
+import com.example.shivr.e_commerce.UI.settings;
 import com.example.shivr.e_commerce.UI.view_all_products;
 import com.example.shivr.e_commerce.UI.view_product_detail;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -42,7 +40,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, view_all_products.OnFragmentInteractionListener, view_product_detail.OnFragmentInteractionListener, GoogleApiClient.ConnectionCallbacks, map.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, view_all_products.OnFragmentInteractionListener, view_product_detail.OnFragmentInteractionListener, GoogleApiClient.ConnectionCallbacks, map.OnFragmentInteractionListener, settings.OnFragmentInteractionListener {
 
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 1;
     private static final int REQUEST_CODE = 101;
@@ -99,7 +97,6 @@ public class MainActivity extends AppCompatActivity
             email.setText(googleSignInAccount.getEmail());
             userImage.setImageURI(googleSignInAccount.getPhotoUrl());
         }
-
     }
 
     @Override
@@ -169,11 +166,18 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_slideshow) {
+            getSupportActionBar().setTitle("All Items");
             launchFragment(new view_all_products());
         }
         if(id == R.id.nav_maps){
+            getSupportActionBar().setTitle("Map");
 //            startActivity(new Intent(this, MapsActivity.class));
             launchFragment(new map());
+        }
+
+        if(id== R.id.nav_settings){
+            getSupportActionBar().setTitle("Settings");
+            launchFragment(new settings());
         }
 
         else if (id == R.id.nav_signOut) {
@@ -247,13 +251,8 @@ public class MainActivity extends AppCompatActivity
         }
         else {
             Log.i("Connected!","Granted!");
-            // No explanation needed, we can request the permission.
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_FINE_LOCATION);
-            // MY_PERMISSIONS_REQUEST_FINE_LOCATION is an
-            // app-defined int constant. The callback method gets the
-            // result of the request.
+            Intent intent = new Intent(this, GeoFenceLocationService.class);
+            startService(intent);
         }
     }
 }

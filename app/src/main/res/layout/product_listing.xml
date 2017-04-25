@@ -32,16 +32,25 @@
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textSize="18sp" />
 
-            <com.facebook.drawee.view.SimpleDraweeView
+            <!--<com.facebook.drawee.view.SimpleDraweeView-->
+                <!--android:id="@+id/imageViewProduct"-->
+                <!--android:layout_width="100dp"-->
+                <!--android:layout_height="150dp"-->
+                <!--fresco:fadeDuration="300"-->
+                <!--android:layout_alignParentStart="true"-->
+                <!--android:layout_below="@+id/textViewProdName"-->
+                <!--tools:layout_editor_absoluteX="3dp"-->
+                <!--tools:layout_editor_absoluteY="165dp"-->
+                <!--/>-->
+
+            <ImageView
                 android:id="@+id/imageViewProduct"
                 android:layout_width="100dp"
                 android:layout_height="150dp"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/textViewProdName"
-                app:srcCompat="@drawable/cart"
                 tools:layout_editor_absoluteX="3dp"
                 tools:layout_editor_absoluteY="165dp"
-                fresco:placeholderImage="@drawable/cart"
                 />
 
             <TextView
