@@ -6,14 +6,23 @@
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_camera"
             android:title="View All Items" />
+
+        <item
+            android:id="@+id/nav_maps"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="View Store Location" />
     </group>
 
-    <item android:title="User Account">
+    <item android:title="User ">
         <menu>
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
                 android:title="Share" />
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="Settings" />
             <item
                 android:id="@+id/nav_signOut"
                 android:icon="@drawable/common_google_signin_btn_icon_dark"
