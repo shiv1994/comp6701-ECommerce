@@ -80,12 +80,6 @@ public class MainActivity extends AppCompatActivity
     private ImageView userImage;
     private Button buttonViewProds;
 
-    private CertificateFactory crtFac;
-    private InputStream inputStream;
-    private Certificate certificate;
-    private KeyStore keystore;
-    private SSLContext context;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -231,89 +225,42 @@ public class MainActivity extends AppCompatActivity
             String resp="";
             SSLHelper sslHelper = SSLHelper.getInstance(MainActivity.this);
 
-            try {
-                String endpoint = "/wc-auth/v1/authorize";
-                String queryString = "app_name=test&scope=read_write&user_id=" + googleSignInAccount.getEmail()
-                        + "&return_url=https://67.205.172.180/&callback_url" +
-                        "=https://67.205.172.180/handle_keys.php";
-
-                // Tell the URLConnection to use a SocketFactory from our SSLContext
-                URL url = new URL("https://67.205.172.180" + endpoint + "?" + queryString);
-                urlConnection = (HttpsURLConnection) url.openConnection();
-                urlConnection.setSSLSocketFactory(sslHelper.getSSLContext().getSocketFactory());
-
-//                // create JSON object to hold paramaters to be passed
-//                JSONObject params = new JSONObject();
-//                params.putOpt("app_name", new String("test"));
-//                params.putOpt("scope", new String("read_write"));
-//                params.putOpt("user_id", googleSignInAccount.getDisplayName());
-//                params.putOpt("return_url", new String("https://67.205.172.180/return-page"));
-//                params.putOpt("callback_url", new String("https://67.205.172.180/callback-endpoint"));
-
-                // configuring connection to allow data to be posted
-                //urlConnection.setDoOutput(true);
-                // set content length to avoid internal buffering
-                //urlConnection.setFixedLengthStreamingMode(params.toString().getBytes().length);
-                Log.v("http", "connecting");
-
-                urlConnection.setHostnameVerifier(new HostnameVerifier() {
-                    @Override
-                    public boolean verify(String s, SSLSession sslSession) {
-                        return true;
-                    }
-                });
-                urlConnection.connect();
-
-                Log.v("http", "connected");
-
-                resp = Integer.toString(urlConnection.getResponseCode());
-            }
-            catch(SSLPeerUnverifiedException e){
-                e.printStackTrace();
-            }
-            catch (IOException e){
-                e.printStackTrace();
-            }
-            finally {
-                if(urlConnection != null)
-                    urlConnection.disconnect();
-            }
-
-//            // pulls down product info
 //            try {
+//                String endpoint = "/wc-auth/v1/authorize";
+//                String queryString = "app_name=test&scope=read_write&user_id=" + googleSignInAccount.getEmail()
+//                        + "&return_url=https://67.205.172.180/&callback_url" +
+//                        "=https://67.205.172.180/handle_keys.php";
+//
 //                // Tell the URLConnection to use a SocketFactory from our SSLContext
-//                URL url = new URL("https://67.205.172.180/wp-json/wc/v2/products");
+//                URL url = new URL("https://67.205.172.180" + endpoint + "?" + queryString);
 //                urlConnection = (HttpsURLConnection) url.openConnection();
 //                urlConnection.setSSLSocketFactory(sslHelper.getSSLContext().getSocketFactory());
 //
-//                // credentials
-//                String user = "ck_970486c965566c58a881f7501f244bc77bebd732";
-//                String pass = "cs_070469e8a858dd957792d25fe51ec8234aedabbf";
-//                String auth = user + ":" + pass;
-//                byte [] encoded  = Base64.encode(auth.getBytes(),Base64.NO_WRAP);
-//                urlConnection.setRequestProperty("Authorization", "Basic " +
-//                        new String(encoded));
+////                // create JSON object to hold paramaters to be passed
+////                JSONObject params = new JSONObject();
+////                params.putOpt("app_name", new String("test"));
+////                params.putOpt("scope", new String("read_write"));
+////                params.putOpt("user_id", googleSignInAccount.getDisplayName());
+////                params.putOpt("return_url", new String("https://67.205.172.180/return-page"));
+////                params.putOpt("callback_url", new String("https://67.205.172.180/callback-endpoint"));
+//
+//                // configuring connection to allow data to be posted
+//                //urlConnection.setDoOutput(true);
+//                // set content length to avoid internal buffering
+//                //urlConnection.setFixedLengthStreamingMode(params.toString().getBytes().length);
+//                Log.v("http", "connecting");
 //
 //                urlConnection.setHostnameVerifier(new HostnameVerifier() {
 //                    @Override
 //                    public boolean verify(String s, SSLSession sslSession) {
-//
 //                        return true;
 //                    }
 //                });
 //                urlConnection.connect();
 //
-//                if(urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK){
-//                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+//                Log.v("http", "connected");
 //
-//                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-//                    StringBuilder result = new StringBuilder();
-//                    String line;
-//                    while ((line = reader.readLine()) != null) {
-//                        result.append(line);
-//                    }
-//                    resp = result.toString();
-//                }
+//                resp = Integer.toString(urlConnection.getResponseCode());
 //            }
 //            catch(SSLPeerUnverifiedException e){
 //                e.printStackTrace();
@@ -326,28 +273,75 @@ public class MainActivity extends AppCompatActivity
 //                    urlConnection.disconnect();
 //            }
 
+            // pulls down product info
+            try {
+                // Tell the URLConnection to use a SocketFactory from our SSLContext
+                URL url = new URL("https://67.205.172.180/wp-json/wc/v2/products");
+                urlConnection = (HttpsURLConnection) url.openConnection();
+                urlConnection.setSSLSocketFactory(sslHelper.getSSLContext().getSocketFactory());
+
+                // credentials
+                String user = "ck_970486c965566c58a881f7501f244bc77bebd732";
+                String pass = "cs_070469e8a858dd957792d25fe51ec8234aedabbf";
+                String auth = user + ":" + pass;
+                byte [] encoded  = Base64.encode(auth.getBytes(),Base64.NO_WRAP);
+                urlConnection.setRequestProperty("Authorization", "Basic " +
+                        new String(encoded));
+
+                urlConnection.setHostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String s, SSLSession sslSession) {
+
+                        return true;
+                    }
+                });
+                urlConnection.connect();
+
+                if(urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK){
+                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder result = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        result.append(line);
+                    }
+                    resp = result.toString();
+                }
+            }
+            catch(SSLPeerUnverifiedException e){
+                e.printStackTrace();
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }
+            finally {
+                if(urlConnection != null)
+                    urlConnection.disconnect();
+            }
+
             return resp;
         }
 
         protected void onPostExecute(String response){
-//            JSONArray jsonArray=null;
-//            try{
-//                jsonArray = new JSONArray(response);
-//
-//                int x, id;
-//                String name;
-//
-//                for(x=0;x<jsonArray.length();x++){
-//                    JSONObject temp = jsonArray.getJSONObject(x);
-//                    id = temp.getInt("id");
-//                    name = temp.getString("name");
-//
-//                    System.out.println("ID: " + id + " Name: " + name);
-//                }
-//            }
-//            catch (JSONException e){
-//                e.printStackTrace();
-//            }
+            JSONArray jsonArray=null;
+            try{
+                jsonArray = new JSONArray(response);
+
+                int x, id;
+                String name;
+
+                for(x=0;x<jsonArray.length();x++){
+                    JSONObject temp = jsonArray.getJSONObject(x);
+                    id = temp.getInt("id");
+                    name = temp.getString("name");
+
+                    System.out.println("ID: " + id + " Name: " + name);
+                }
+            }
+            catch (JSONException e){
+                e.printStackTrace();
+            }
 
             Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
         }
