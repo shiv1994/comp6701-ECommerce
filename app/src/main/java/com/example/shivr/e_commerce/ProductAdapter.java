@@ -65,7 +65,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
         Uri imageUri = Uri.parse(product.getImgRef());
 
 //        holder.imageDraweeView.setImageURI(imageUri);
-        holder.imageView.setImageURI(imageUri);
+        holder.imageView.setImageBitmap(product.getBitmap());
+        //holder.imageView.setImageURI(imageUri);
         holder.title.setText("Name: "+product.getName());
         holder.desc.setText("Description: "+product.getDescription());
         holder.price.setText("Price: $"+String.valueOf(product.getPrice()));

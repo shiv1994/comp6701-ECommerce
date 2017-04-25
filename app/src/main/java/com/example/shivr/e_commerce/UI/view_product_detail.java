@@ -59,7 +59,7 @@ public class view_product_detail extends Fragment {
         priceView.setText("Price: $"+String.valueOf(product.getPrice()));
         descView.setText(product.getLong_desc());
         Uri imageUri = Uri.parse(product.getImgRef());
-        imgView.setImageURI(imageUri);
+        imgView.setImageBitmap(product.getBitmap());
         ratingBarView.setRating((product.getAvg_rating().floatValue()));
 
         return view;
