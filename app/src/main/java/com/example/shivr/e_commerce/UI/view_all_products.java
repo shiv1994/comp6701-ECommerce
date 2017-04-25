@@ -86,6 +86,12 @@ public class view_all_products extends Fragment {
         file = new File(getContext().getFilesDir(), fileName);
 
         isConnected = checkInternetConnection();
+
+        if(isConnected){
+            // get products from online
+            HttpRequestTask httpRequestTask = new HttpRequestTask(getActivity());
+            httpRequestTask.execute();
+        }
     }
 
 
@@ -123,13 +129,7 @@ public class view_all_products extends Fragment {
             }
         });
 
-        if(isConnected){
-            // get products from online
-            HttpRequestTask httpRequestTask = new HttpRequestTask(getActivity());
-            httpRequestTask.execute();
-        }
-
-        else {
+        if(!isConnected){
             // check if file exists
             if(file.exists()){
                 // load product info from file
