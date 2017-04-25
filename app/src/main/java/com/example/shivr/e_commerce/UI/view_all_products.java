@@ -2,6 +2,8 @@ package com.example.shivr.e_commerce.UI;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,9 +30,12 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -62,6 +67,9 @@ public class view_all_products extends Fragment {
     private LayoutManagerType layoutManagerType;
     private RecyclerView.LayoutManager layoutManager;
     private SearchView searchView;
+    private File file;
+    private String fileName;
+    private Boolean isConnected;
 
     public view_all_products() {
         // Required empty public constructor
@@ -74,12 +82,10 @@ public class view_all_products extends Fragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         productList = new ArrayList<Product>();
-        HttpRequestTask httpRequestTask = new HttpRequestTask(getActivity());
+        fileName = "products.txt";
+        file = new File(getContext().getFilesDir(), fileName);
 
-//        productList.add(new Product("Apple MacBook", 678.99, "Fast Laptop"));
-//        productList.add(new Product("Apple MacBook PRO", 1678.99, "Fastest Laptop"));
-
-        httpRequestTask.execute();
+        isConnected = checkInternetConnection();
     }
 
 
@@ -116,6 +122,21 @@ public class view_all_products extends Fragment {
                 return true;
             }
         });
+
+        if(isConnected){
+            // get products from online
+            HttpRequestTask httpRequestTask = new HttpRequestTask(getActivity());
+            httpRequestTask.execute();
+        }
+
+        else {
+            // check if file exists
+            if(file.exists()){
+                // load product info from file
+                String data = readFromFile();
+                loadProducts(data);
+            }
+        }
 
         // Inflate the layout for this fragment
         return rootView;
@@ -172,6 +193,96 @@ public class view_all_products extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    private Boolean checkInternetConnection(){
+        ConnectivityManager cm = (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+        return isConnected;
+    }
+
+    private void saveProductData(String data){
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(getContext().openFileOutput(fileName, Context.MODE_PRIVATE));
+            outputStreamWriter.write(data);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
+    private String readFromFile() {
+
+        String data = "";
+
+        try {
+            InputStream inputStream = getContext().openFileInput(fileName);
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String temp = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (temp = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(temp);
+                }
+
+                inputStream.close();
+                data = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
+        }
+
+        return data;
+    }
+
+    private void loadProducts(String data) {
+        JSONArray jsonArray=null;
+
+        try {
+            jsonArray = new JSONArray(data);
+
+            int x, id;
+            String name;
+            String price;
+            String desc;
+            String longDesc;
+            Double rating;
+            JSONArray imgArr;
+            JSONObject imgObj;
+
+            for (x = 0; x < jsonArray.length(); x++) {
+                JSONObject temp = jsonArray.getJSONObject(x);
+                id = temp.getInt("id");
+                name = temp.getString("name");
+                price = temp.getString("price");
+                desc = temp.getString("short_description");
+                longDesc = temp.getString("description");
+                rating = temp.getDouble("average_rating");
+
+                imgArr = temp.getJSONArray("images");
+                imgObj = imgArr.getJSONObject(0);
+
+                productList.add(new Product(name, Double.parseDouble(price), desc, longDesc, imgObj.getString("src"), rating));
+            }
+
+            mAdapter = new ProductAdapter(productList);
+            recyclerView.setAdapter(mAdapter);
+            mAdapter.notifyDataSetChanged();
+        }
+        catch (JSONException e){
+            e.printStackTrace();
+        }
+
     }
 
     private class HttpRequestTask extends AsyncTask<Void, Void, String> {
@@ -278,6 +389,8 @@ public class view_all_products extends Fragment {
                 mAdapter.notifyDataSetChanged();
 
                 progressDialog.dismiss();
+
+                saveProductData(response);
             }
             catch (JSONException e){
                 e.printStackTrace();
