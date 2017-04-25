@@ -44,7 +44,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
                 public void onClick(View view) {
                     FragmentManager fragmentManager = ((MainActivity)itemView.getContext()).getSupportFragmentManager();
                     fragmentManager.beginTransaction()
-                            .replace(R.id.content_frame, view_product_detail.getInstance(getAdapterPosition()))
+                            .replace(R.id.content_frame, view_product_detail.getInstance(productList.get(getAdapterPosition())))
                             .addToBackStack("tag")
                             .commit();
                 }
