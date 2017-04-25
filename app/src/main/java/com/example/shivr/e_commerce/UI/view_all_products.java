@@ -253,6 +253,8 @@ public class view_all_products extends Fragment {
                 String name;
                 String price;
                 String desc;
+                String longDesc;
+                Double rating;
                 JSONArray imgArr;
                 JSONObject imgObj;
 
@@ -262,11 +264,13 @@ public class view_all_products extends Fragment {
                     name = temp.getString("name");
                     price = temp.getString("price");
                     desc = temp.getString("short_description");
+                    longDesc = temp.getString("description");
+                    rating = temp.getDouble("average_rating");
 
                     imgArr = temp.getJSONArray("images");
                     imgObj = imgArr.getJSONObject(0);
 
-                    productList.add(new Product(name, Double.parseDouble(price), desc, imgObj.getString("src")));
+                    productList.add(new Product(name, Double.parseDouble(price), desc, longDesc, imgObj.getString("src"), rating));
                 }
 
                 mAdapter = new ProductAdapter(productList);

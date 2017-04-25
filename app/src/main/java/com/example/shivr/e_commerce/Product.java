@@ -1,5 +1,6 @@
 package com.example.shivr.e_commerce;
 
+import android.renderscript.Double2;
 import android.widget.ImageView;
 
 /**
@@ -10,8 +11,10 @@ public class Product {
     private String name;
     private Double price;
     private String description;
+    private String long_desc;
     private ImageView imageView;
     private String imgRef;
+    private Double avg_rating;
 
     public Product(String name, Double price, String description) {
         this.name = name;
@@ -19,11 +22,13 @@ public class Product {
         this.description = description;
     }
 
-    public Product(String name, Double price, String description, String imgRef) {
+    public Product(String name, Double price, String description, String long_desc, String imgRef, Double avg_rating) {
         this.name = name;
         this.price = price;
         this.description = description;
         this.imgRef = imgRef;
+        this.avg_rating = avg_rating;
+        this.long_desc = long_desc;
     }
 
     public String getImgRef() {
@@ -44,5 +49,13 @@ public class Product {
 
     public ImageView getImageView() {
         return imageView;
+    }
+
+    public Double getAvg_rating() {
+        return avg_rating;
+    }
+
+    public String getLong_desc() {
+        return long_desc;
     }
 }
