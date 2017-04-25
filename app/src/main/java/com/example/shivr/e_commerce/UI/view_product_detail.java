@@ -1,6 +1,7 @@
 package com.example.shivr.e_commerce.UI;
 
 import android.content.Context;
+import android.icu.text.DecimalFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.shivr.e_commerce.Product;
 import com.example.shivr.e_commerce.R;
+import com.example.shivr.e_commerce.Utils;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 /**
@@ -56,8 +58,8 @@ public class view_product_detail extends Fragment {
         descView = (TextView)view.findViewById(R.id.textViewProdDesc);
 
         nameView.setText(product.getName());
-        priceView.setText("Price: $"+String.valueOf(product.getPrice()));
-        descView.setText(product.getLong_desc());
+        priceView.setText("Price: $"+ Utils.getDecimalFormatForPrice(product.getPrice()));
+        descView.setText("Description: "+product.getLong_desc());
         Uri imageUri = Uri.parse(product.getImgRef());
         imgView.setImageURI(imageUri);
         ratingBarView.setRating((product.getAvg_rating().floatValue()));

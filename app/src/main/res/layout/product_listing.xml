@@ -2,21 +2,24 @@
 
 <LinearLayout xmlns:fresco="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="150dp"
     xmlns:tools="http://schemas.android.com/tools">
 
 
     <android.support.v7.widget.CardView
+        android:id="@+id/cv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/cv">
+        card_view:cardCornerRadius="5dp"
+        card_view:cardElevation="2dp"
+        fresco:cardUseCompatPadding="true">
 
         <RelativeLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/productPrice"
@@ -26,22 +29,22 @@
                 android:layout_below="@+id/productName"
                 android:layout_marginTop="16dp"
                 android:layout_toEndOf="@+id/imageViewProduct"
-                android:fontFamily="serif"
+                android:fontFamily="sans-serif"
                 android:text="Price"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textSize="18sp" />
 
             <!--<com.facebook.drawee.view.SimpleDraweeView-->
-                <!--android:id="@+id/imageViewProduct"-->
-                <!--android:layout_width="100dp"-->
-                <!--android:layout_height="150dp"-->
-                <!--fresco:fadeDuration="300"-->
-                <!--android:layout_alignParentStart="true"-->
-                <!--android:layout_below="@+id/textViewProdName"-->
-                <!--tools:layout_editor_absoluteX="3dp"-->
-                <!--tools:layout_editor_absoluteY="165dp"-->
-                <!--/>-->
+            <!--android:id="@+id/imageViewProduct"-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="150dp"-->
+            <!--fresco:fadeDuration="300"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_below="@+id/textViewProdName"-->
+            <!--tools:layout_editor_absoluteX="3dp"-->
+            <!--tools:layout_editor_absoluteY="165dp"-->
+            <!--/>-->
 
             <ImageView
                 android:id="@+id/imageViewProduct"
@@ -50,8 +53,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/textViewProdName"
                 tools:layout_editor_absoluteX="3dp"
-                tools:layout_editor_absoluteY="165dp"
-                />
+                tools:layout_editor_absoluteY="165dp" />
 
             <TextView
                 android:id="@+id/productName"
@@ -61,7 +63,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_toEndOf="@+id/imageViewProduct"
                 android:layout_weight="1"
-                android:fontFamily="serif"
+                android:fontFamily="sans-serif"
                 android:text="Product Name"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat"
@@ -76,18 +78,11 @@
                 android:layout_below="@+id/productPrice"
                 android:layout_marginTop="21dp"
                 android:layout_toEndOf="@+id/imageViewProduct"
-                android:fontFamily="serif"
+                android:fontFamily="sans-serif"
                 android:text="Description: "
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textSize="16sp" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_below="@+id/imageViewProduct"
-                android:layout_marginTop="5dp"
-                android:background="@android:color/darker_gray"/>
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>

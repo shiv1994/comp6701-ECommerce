@@ -27,6 +27,7 @@ import com.example.shivr.e_commerce.SSLHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -381,7 +382,7 @@ public class view_all_products extends Fragment {
                     imgArr = temp.getJSONArray("images");
                     imgObj = imgArr.getJSONObject(0);
 
-                    productList.add(new Product(name, Double.parseDouble(price), desc, longDesc, imgObj.getString("src"), rating));
+                    productList.add(new Product(Jsoup.parse(name).text(), Double.parseDouble(price), Jsoup.parse(desc).text(), Jsoup.parse(longDesc).text(), imgObj.getString("src"), rating));
                 }
 
                 mAdapter = new ProductAdapter(productList);

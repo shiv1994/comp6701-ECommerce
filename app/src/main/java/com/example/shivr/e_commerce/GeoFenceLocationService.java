@@ -22,6 +22,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +42,11 @@ public class GeoFenceLocationService extends IntentService implements GoogleApiC
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        enableLocationDetection();
-        Log.i("Location","Detection Enabled.");
+        if(!Utils.checkBooleanSharedPrefs(Utils.getSharedPrefs(getApplicationContext()), Utils.geoFencesSet)) {
+            Log.i("Location","GeoFence Set");
+            enableLocationDetection();
+            Utils.insertSharedPrefsBool(Utils.geoFencesSet, true, Utils.getSharedPrefs(getApplicationContext()));
+        }
     }
 
     @Override
@@ -72,6 +76,8 @@ public class GeoFenceLocationService extends IntentService implements GoogleApiC
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+        uwiFenceList = new ArrayList();
+
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addApi(LocationServices.API)
@@ -93,7 +99,7 @@ public class GeoFenceLocationService extends IntentService implements GoogleApiC
 
     private LocationRequest getLocationRequest() {
         LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(60000);
+        mLocationRequest.setInterval(120000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         return mLocationRequest;
     }
@@ -102,7 +108,7 @@ public class GeoFenceLocationService extends IntentService implements GoogleApiC
         Map details = new HashMap();
         details.put("latitude",10.643121452729275 );
         details.put("longitude",-61.40167124569416 );
-        details.put("radius",150 );
+        details.put("radius",500);
         details.put("ID", 0);
 
         uwiFenceList.add(new Geofence.Builder()
@@ -138,7 +144,6 @@ public class GeoFenceLocationService extends IntentService implements GoogleApiC
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Log.d("LocationService", "Attempting to setup Add a GeoFence");
             if (uwiFenceList != null &&  uwiFenceList.size() > 0) {
-
                 LocationServices.GeofencingApi.addGeofences(
                         mGoogleApiClient,
                         getGeofencingRequest(),

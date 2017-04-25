@@ -2,6 +2,7 @@ package com.example.shivr.e_commerce;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.icu.text.DecimalFormat;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.gson.Gson;
@@ -15,6 +16,7 @@ public class Utils {
     private static String signInInfo = "signInInfo";
     public static String signedInBoolKey = "signedIn";
     public static String userSelectedLocationEnable = "userSelectLocationEnable";
+    public static String geoFencesSet = "getFencesSet";
 
     public static SharedPreferences getSharedPrefs(Context context){
         return context.getSharedPreferences(sharedPrefKey, Context.MODE_PRIVATE);
@@ -44,5 +46,10 @@ public class Utils {
         if (!json.equals(""))
             return gson.fromJson(json, GoogleSignInAccount.class);
         return null;
+    }
+
+    public static String getDecimalFormatForPrice(Double price){
+        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+        return decimalFormat.format(price);
     }
 }

@@ -67,8 +67,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
 //        holder.imageDraweeView.setImageURI(imageUri);
         holder.imageView.setImageURI(imageUri);
         holder.title.setText("Name: "+product.getName());
-        holder.desc.setText("Description: "+product.getDescription());
-        holder.price.setText("Price: $"+String.valueOf(product.getPrice()));
+        holder.desc.setText("Description: "+product.getDescription().substring(0,40)+"...");
+        holder.price.setText("Price: $"+Utils.getDecimalFormatForPrice(product.getPrice()));
 
     }
 
