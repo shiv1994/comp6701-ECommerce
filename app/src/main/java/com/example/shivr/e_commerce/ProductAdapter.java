@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.shivr.e_commerce.UI.view_product_detail;
@@ -31,13 +32,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
 
         public TextView title, price, desc;
         public SimpleDraweeView imageDraweeView;
+        public ImageView imageView;
 
         public MyViewHolder(final View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.productName);
             price = (TextView) itemView.findViewById(R.id.productPrice);
             desc = (TextView) itemView.findViewById(R.id.productDescSmall);
-            imageDraweeView = (SimpleDraweeView) itemView.findViewById(R.id.imageViewProduct);
+//            imageDraweeView = (SimpleDraweeView) itemView.findViewById(R.id.imageViewProduct);
+            imageView = (ImageView) itemView.findViewById(R.id.imageViewProduct);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -60,10 +63,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
     public void onBindViewHolder(ProductAdapter.MyViewHolder holder, int position) {
         Product product = productList.get(position);
         Uri imageUri = Uri.parse(product.getImgRef());
+
+//        holder.imageDraweeView.setImageURI(imageUri);
+        holder.imageView.setImageURI(imageUri);
         holder.title.setText("Name: "+product.getName());
         holder.desc.setText("Description: "+product.getDescription());
         holder.price.setText("Price: $"+String.valueOf(product.getPrice()));
-        holder.imageDraweeView.setImageURI(imageUri);
+
     }
 
 
