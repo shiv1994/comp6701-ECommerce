@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity
 
         Fresco.initialize(this);
 
+
         setContentView(R.layout.activity_main);
 
         checkPermissions();
