@@ -2,6 +2,8 @@ package com.example.shivr.e_commerce.UI;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -23,6 +25,7 @@ import com.example.shivr.e_commerce.Product;
 import com.example.shivr.e_commerce.ProductAdapter;
 import com.example.shivr.e_commerce.R;
 import com.example.shivr.e_commerce.SSLHelper;
+import com.facebook.imagepipeline.request.ImageRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +41,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +75,7 @@ public class view_all_products extends Fragment {
     private File file;
     private String fileName;
     private Boolean isConnected;
+    private HttpRequestTask httpRequestTask;
 
     public view_all_products() {
         // Required empty public constructor
@@ -90,7 +95,7 @@ public class view_all_products extends Fragment {
 
         if(isConnected){
             // get products from online
-            HttpRequestTask httpRequestTask = new HttpRequestTask(getActivity());
+            httpRequestTask = new HttpRequestTask(getActivity());
             httpRequestTask.execute();
         }
     }
@@ -273,6 +278,8 @@ public class view_all_products extends Fragment {
                 imgArr = temp.getJSONArray("images");
                 imgObj = imgArr.getJSONObject(0);
 
+                System.out.println(imgObj.getString("src"));
+
                 productList.add(new Product(name, Double.parseDouble(price), desc, longDesc, imgObj.getString("src"), rating));
             }
 
@@ -289,7 +296,7 @@ public class view_all_products extends Fragment {
     private class HttpRequestTask extends AsyncTask<Void, Void, String> {
 
         private Context context;
-        private ProgressDialog progressDialog;
+        public ProgressDialog progressDialog;
 
         public HttpRequestTask(Context context){
             this.context = context;
@@ -385,15 +392,89 @@ public class view_all_products extends Fragment {
                     productList.add(new Product(Jsoup.parse(name).text(), Double.parseDouble(price), Jsoup.parse(desc).text(), Jsoup.parse(longDesc).text(), imgObj.getString("src"), rating));
                 }
 
-                mAdapter = new ProductAdapter(productList);
-                recyclerView.setAdapter(mAdapter);
-                mAdapter.notifyDataSetChanged();
-                progressDialog.dismiss();
+                for(x=0;x<productList.size();x++)
+                    new ImageRequestTask(context,x).execute(productList.get(x).getImgRef());
+
+//                mAdapter = new ProductAdapter(productList);
+//                recyclerView.setAdapter(mAdapter);
+//                mAdapter.notifyDataSetChanged();
+//                progressDialog.dismiss();
 
                 saveProductData(response);
             }
             catch (JSONException e){
                 e.printStackTrace();
+            }
+        }
+    }
+
+    private class ImageRequestTask extends AsyncTask<String, Void, Bitmap> {
+
+        private Context context;
+        private int position;
+
+        public ImageRequestTask(Context context, int position){
+            this.context = context;
+            this.position = position;
+        }
+
+        protected Bitmap doInBackground(String... imgUrl){
+
+            HttpsURLConnection urlConnection=null;
+            SSLHelper sslHelper = SSLHelper.getInstance(context);
+            Bitmap bitmap = null;
+
+            // pulls down image
+            try {
+                // Tell the URLConnection to use a SocketFactory from our SSLContext
+                URL url = new URL(imgUrl[0]);
+                urlConnection = (HttpsURLConnection) url.openConnection();
+                urlConnection.setSSLSocketFactory(sslHelper.getSSLContext().getSocketFactory());
+
+                urlConnection.setHostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String s, SSLSession sslSession) {
+
+                        return true;
+                    }
+                });
+
+                urlConnection.connect();
+
+                if(urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK){
+                    InputStream is = urlConnection.getInputStream();
+                    BufferedInputStream bis = new BufferedInputStream(is);
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inSampleSize = 8;
+                    bitmap = BitmapFactory.decodeStream(bis,null,options);
+                    bis.close();
+                    is.close();
+                }
+            }
+            catch(SSLPeerUnverifiedException e){
+                e.printStackTrace();
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }
+            finally {
+                if(urlConnection != null)
+                    urlConnection.disconnect();
+            }
+
+            return bitmap;
+        }
+
+        protected void onPostExecute(Bitmap response){
+            Product temp = productList.get(position);
+            temp.setBitmap(response);
+            productList.set(position,temp);
+
+            if(position == productList.size()-1){
+                mAdapter = new ProductAdapter(productList);
+                recyclerView.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
+                httpRequestTask.progressDialog.dismiss();
             }
         }
     }

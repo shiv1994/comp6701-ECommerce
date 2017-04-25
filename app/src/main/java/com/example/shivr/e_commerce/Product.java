@@ -1,5 +1,6 @@
 package com.example.shivr.e_commerce;
 
+import android.graphics.Bitmap;
 import android.renderscript.Double2;
 import android.widget.ImageView;
 
@@ -15,6 +16,7 @@ public class Product {
     private ImageView imageView;
     private String imgRef;
     private Double avg_rating;
+    private Bitmap bitmap;
 
     public Product(String name, Double price, String description) {
         this.name = name;
@@ -57,5 +59,13 @@ public class Product {
 
     public String getLong_desc() {
         return long_desc;
+    }
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
     }
 }
