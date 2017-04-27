@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.icu.text.DecimalFormat;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.gson.Gson;
@@ -70,5 +72,9 @@ public class Utils {
     public static String getDecimalFormatForPrice(Double price){
         DecimalFormat decimalFormat = new DecimalFormat("#.00");
         return decimalFormat.format(price);
+    }
+
+    public static void makeShowSnackbar(String message, View view){
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
     }
 }

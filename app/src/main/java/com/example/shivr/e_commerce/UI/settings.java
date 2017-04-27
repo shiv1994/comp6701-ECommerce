@@ -46,7 +46,7 @@ public class settings extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
         locationSwitch = (Switch) rootView.findViewById(R.id.switch1);
         locationSwitch.setChecked(Utils.getSharedPrefsBoolean(sharedPreferences, Utils.locationOn));
         locationSwitch.setOnClickListener(new View.OnClickListener() {
@@ -56,10 +56,13 @@ public class settings extends Fragment {
                     Utils.insertSharedPrefs(Utils.locationOn, true, sharedPreferences);
                     Intent intent = new Intent(getContext(), GeoFenceLocationService.class);
                     getActivity().startService(intent);
+                    Utils.makeShowSnackbar("Location Enabled.", rootView);
                 }
                 else{
+                    Utils.insertSharedPrefs(Utils.geoFencesSet, false, sharedPreferences);
                     Utils.insertSharedPrefs(Utils.locationOn, false, sharedPreferences);
                     getActivity().stopService(new Intent(getContext(), GeoFenceLocationService.class));
+                    Utils.makeShowSnackbar("Location Disabled.", rootView);
                 }
             }
         });

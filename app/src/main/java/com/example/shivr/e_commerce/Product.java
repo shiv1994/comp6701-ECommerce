@@ -22,19 +22,21 @@ public class Product implements Parcelable {
     private Double avg_rating;
     private Bitmap bitmap;
 
-
-    public Product(String name, Double price, String description) {
-        this.name = name;
-        this.price = price;
-        this.description = description;
-    }
-
     @Override
     public int describeContents() {
         return 0;
     }
 
+    public static final Parcelable.Creator<Product> CREATOR
+            = new Parcelable.Creator<Product>() {
+        public Product createFromParcel(Parcel in) {
+            return new Product(in.readString(), in.readDouble(), in.readString(), in.readString(), in.readString(), in.readDouble());
+        }
 
+        public Product[] newArray(int size) {
+            return new Product[size];
+        }
+    };
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {

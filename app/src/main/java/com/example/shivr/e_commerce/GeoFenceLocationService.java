@@ -1,20 +1,15 @@
 package com.example.shivr.e_commerce;
 
-import android.app.IntentService;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -103,9 +98,9 @@ public class GeoFenceLocationService extends Service implements GoogleApiClient.
     @Override
     public void onDestroy() {
         super.onDestroy();
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, getGeofencePendingIntent());
         mGoogleApiClient.disconnect();
-//        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, getGeofencePendingIntent());
-//        LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, uwiFenceList);
         Log.i("Hello", "I am being killed!");
     }
 
@@ -142,8 +137,9 @@ public class GeoFenceLocationService extends Service implements GoogleApiClient.
                         (double)details.get("longitude"),
                         radius
                 )
+                .setLoiteringDelay(300000)
                 .setExpirationDuration(-1)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL)
                 .build()
         );
     }

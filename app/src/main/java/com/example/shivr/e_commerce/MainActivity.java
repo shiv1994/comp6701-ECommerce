@@ -41,7 +41,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, view_all_products.OnFragmentInteractionListener, view_product_detail.OnFragmentInteractionListener, GoogleApiClient.ConnectionCallbacks, map.OnFragmentInteractionListener, settings.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, view_all_products.OnFragmentInteractionListener, view_product_detail.OnFragmentInteractionListener, GoogleApiClient.ConnectionCallbacks, map.OnFragmentInteractionListener, settings.OnFragmentInteractionListener, coupon_list.OnFragmentInteractionListener {
 
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 1;
     private static final int REQUEST_CODE = 101;
@@ -134,6 +134,11 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+            if (getFragmentManager().getBackStackEntryCount() > 0) {
+                getFragmentManager().popBackStack();
+            } else {
+                super.onBackPressed();
+            }
         } else {
             super.onBackPressed();
         }
@@ -169,7 +174,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_slideshow) {
-            getSupportActionBar().setTitle("All Items");
+            getSupportActionBar().setTitle("All Products");
             launchFragment(new view_all_products());
         }
         if(id == R.id.nav_coupons){
@@ -210,8 +215,8 @@ public class MainActivity extends AppCompatActivity
     private void launchFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
-//                .addToBackStack("tag")
+                .add(R.id.content_frame, fragment)
+                .addToBackStack(null)
                 .commit();
     }
 
@@ -221,6 +226,7 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.content_frame, new view_all_products())
                 .commit();
     }
+
 
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -232,11 +238,12 @@ public class MainActivity extends AppCompatActivity
                     Intent intent = new Intent(this, GeoFenceLocationService.class);
                     startService(intent);
                     Utils.insertSharedPrefs(Utils.locationOn, true, sharedPreferences);
+                    Utils.makeShowSnackbar("Location Enabled.", getWindow().getDecorView().getRootView());
                 }
                 else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Toast.makeText(getApplicationContext(),"Location Awareness Not Enabled!",Toast.LENGTH_LONG);
+                    Utils.makeShowSnackbar("Location Disabled Due To Permissions.", getWindow().getDecorView().getRootView());
                 }
                 return;
             }
@@ -273,16 +280,21 @@ public class MainActivity extends AppCompatActivity
                 try {
                     if (action.equalsIgnoreCase(getResources().getString(R.string.notification_coupon)))
                         launchFragment(new coupon_list());
-                    else
-                        loadDefaultFragment();
-                } catch (Exception e) {
+                    else {
+                        //loadDefaultFragment();
+                    }
+                }
+                catch (Exception e) {
                     Log.e("Error", "Problem consuming action from intent", e);
                 }
-            } else
-                loadDefaultFragment();
+            }
+            else {
+                //loadDefaultFragment();
+            }
         }
-        else
-            loadDefaultFragment();
+        else {
+            //loadDefaultFragment();
+        }
     }
 
 }

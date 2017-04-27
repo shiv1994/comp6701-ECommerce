@@ -53,12 +53,6 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link view_all_products.OnFragmentInteractionListener} interface
- * to handle interaction events.
- */
 public class view_all_products extends Fragment {
 
     private enum LayoutManagerType {
@@ -98,7 +92,6 @@ public class view_all_products extends Fragment {
         }
         else{
             isConnected = checkInternetConnection();
-
             if(isConnected){
                 // get products from online
                 httpRequestTask = new HttpRequestTask(getActivity());
@@ -192,6 +185,25 @@ public class view_all_products extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        Log.i("Called","Pause");
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("productList", (ArrayList<? extends Parcelable>) productList);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i("Called","Resume");
+        Bundle extras = getActivity().getIntent().getExtras();
+        if(extras!=null) {
+            productList = extras.getParcelableArrayList("productList");
+            Log.i("First Element", "" + productList.get(0).getName());
+        }
     }
 
     /**
