@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -59,6 +60,7 @@ public class view_all_products extends Fragment {
         LINEAR_LAYOUT_MANAGER
     }
 
+    private static boolean productsLoaded = false;
     private OnFragmentInteractionListener mListener;
     private RecyclerView recyclerView;
     private ProductAdapter mAdapter;
@@ -83,19 +85,20 @@ public class view_all_products extends Fragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        productList = new ArrayList<Product>();
-        fileName = "products.txt";
-        file = new File(getContext().getFilesDir(), fileName);
+        if(!productsLoaded) {
+            productList = new ArrayList<Product>();
+            fileName = "products.txt";
+            file = new File(getContext().getFilesDir(), fileName);
 
-        if(savedInstanceState!=null){
-            productList = savedInstanceState.getParcelableArrayList("productList");
-        }
-        else{
-            isConnected = checkInternetConnection();
-            if(isConnected){
-                // get products from online
-                httpRequestTask = new HttpRequestTask(getActivity());
-                httpRequestTask.execute();
+            if (savedInstanceState != null) {
+                productList = savedInstanceState.getParcelableArrayList("productList");
+            } else {
+                isConnected = checkInternetConnection();
+                if (isConnected) {
+                    // get products from online
+                    httpRequestTask = new HttpRequestTask(getActivity());
+                    httpRequestTask.execute();
+                }
             }
         }
     }
@@ -187,22 +190,41 @@ public class view_all_products extends Fragment {
         mListener = null;
     }
 
+
+
+//    @Override
+//    public void onPause(){
+//        super.onPause();
+//        Log.i("Called","Pause");
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelableArrayList("productList", (ArrayList<? extends Parcelable>) productList);
+//    }
+//
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        Log.i("Called","Resume");
+//        Bundle extras = getActivity().getIntent().getExtras();
+//        if(extras!=null) {
+//            productList = extras.getParcelableArrayList("productList");
+//
+//        }
+//    }
+
     @Override
-    public void onPause(){
-        super.onPause();
-        Log.i("Called","Pause");
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList("productList", (ArrayList<? extends Parcelable>) productList);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        Log.i("Called","Resume");
-        Bundle extras = getActivity().getIntent().getExtras();
-        if(extras!=null) {
-            productList = extras.getParcelableArrayList("productList");
-            Log.i("First Element", "" + productList.get(0).getName());
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        productsLoaded = true;
+        if(savedInstanceState!=null) {
+            if(savedInstanceState.containsKey("productList"))
+                productList = savedInstanceState.getParcelableArrayList("productList");
         }
     }
 
@@ -311,13 +333,6 @@ public class view_all_products extends Fragment {
         }
 
     }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("productList", (ArrayList<? extends Parcelable>) productList);
-    }
-
     private class HttpRequestTask extends AsyncTask<Void, Void, String> {
 
         private Context context;

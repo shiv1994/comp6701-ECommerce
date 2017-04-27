@@ -25,6 +25,7 @@ public class Utils {
     public static String geoFencesSet = "getFencesSet";
     public static String systemTimeMillis = "systemTimeMillis";
     public static String locationOn = "locationOn";
+    public static String coupon = "coupon";
 
     public static Double latitude = 10.64104;
     public static Double longtitude = -61.40047;
@@ -45,12 +46,22 @@ public class Utils {
         editor.apply();
     }
 
+    public static void insertSharedPrefs(String key, String coupons, SharedPreferences sharedPreferences){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(key, coupons);
+        editor.apply();
+    }
+
     public static boolean getSharedPrefsBoolean(SharedPreferences sharedPreferences, String key){
         return sharedPreferences.getBoolean(key, false);
     }
 
     public static long getSharedPrefsLong(SharedPreferences sharedPreferences, String key){
         return sharedPreferences.getLong(key, -1);
+    }
+
+    public static String getSharedPrefString(SharedPreferences sharedPreferences, String key){
+        return sharedPreferences.getString(key,"cvbcx");
     }
 
     public static void saveUserInfo(GoogleSignInAccount googleSignInAccount, SharedPreferences sharedPreferences){
