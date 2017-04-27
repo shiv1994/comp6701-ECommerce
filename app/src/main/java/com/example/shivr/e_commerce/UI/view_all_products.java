@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -87,16 +88,22 @@ public class view_all_products extends Fragment {
 
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
         productList = new ArrayList<Product>();
         fileName = "products.txt";
         file = new File(getContext().getFilesDir(), fileName);
 
-        isConnected = checkInternetConnection();
+        if(savedInstanceState!=null){
+            productList = savedInstanceState.getParcelableArrayList("productList");
+        }
+        else{
+            isConnected = checkInternetConnection();
 
-        if(isConnected){
-            // get products from online
-            httpRequestTask = new HttpRequestTask(getActivity());
-            httpRequestTask.execute();
+            if(isConnected){
+                // get products from online
+                httpRequestTask = new HttpRequestTask(getActivity());
+                httpRequestTask.execute();
+            }
         }
     }
 
@@ -291,6 +298,12 @@ public class view_all_products extends Fragment {
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("productList", (ArrayList<? extends Parcelable>) productList);
     }
 
     private class HttpRequestTask extends AsyncTask<Void, Void, String> {

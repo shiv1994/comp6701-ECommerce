@@ -1,6 +1,9 @@
 package com.example.shivr.e_commerce;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.renderscript.Double2;
 import android.widget.ImageView;
 
@@ -8,7 +11,8 @@ import android.widget.ImageView;
  * Created by shivr on 21/04/2017.
  */
 
-public class Product {
+@SuppressLint("ParcelCreator")
+public class Product implements Parcelable {
     private String name;
     private Double price;
     private String description;
@@ -18,10 +22,29 @@ public class Product {
     private Double avg_rating;
     private Bitmap bitmap;
 
+
     public Product(String name, Double price, String description) {
         this.name = name;
         this.price = price;
         this.description = description;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(name);
+        parcel.writeDouble(price);
+        parcel.writeString(description);
+        parcel.writeString(long_desc);
+        parcel.writeString(imgRef);
+        parcel.writeDouble(avg_rating);
+        bitmap.writeToParcel(parcel,0);
     }
 
     public Product(String name, Double price, String description, String long_desc, String imgRef, Double avg_rating) {

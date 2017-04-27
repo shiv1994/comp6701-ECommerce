@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-smallcaps"
-            android:text="MAS Electronics"
+            android:text="MAS Headphones"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/LightSlateGray"
@@ -30,6 +30,15 @@
             android:layout_width="match_parent"
             android:layout_height="300dp" />
 
+        <Button
+            android:id="@+id/sign_in_button"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Sign In"
+            android:theme="@style/MyButton" />
+
         <TextView
             android:id="@+id/link_signup"
             android:layout_width="fill_parent"
@@ -39,15 +48,6 @@
             android:text="Sign-In Using Your Google Account"
             android:textColor="@color/AliceBlue"
             android:textSize="16dip" />
-
-        <Button
-            android:id="@+id/sign_in_button"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Sign In"
-            android:theme="@style/MyButton" />
 
     </LinearLayout>
 </ScrollView>

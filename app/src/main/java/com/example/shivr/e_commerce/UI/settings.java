@@ -1,21 +1,28 @@
 package com.example.shivr.e_commerce.UI;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Switch;
 
+import com.example.shivr.e_commerce.GeoFenceLocationService;
 import com.example.shivr.e_commerce.MainActivity;
 import com.example.shivr.e_commerce.R;
+import com.example.shivr.e_commerce.Utils;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
 public class settings extends Fragment {
 
 
     private OnFragmentInteractionListener mListener;
+    private Switch locationSwitch;
+    private SharedPreferences sharedPreferences;
 
     public settings() {
         // Required empty public constructor
@@ -31,6 +38,7 @@ public class settings extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        sharedPreferences = Utils.getSharedPrefs(this.getContext());
         super.onCreate(savedInstanceState);
     }
 
@@ -39,6 +47,22 @@ public class settings extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
+        locationSwitch = (Switch) rootView.findViewById(R.id.switch1);
+        locationSwitch.setChecked(Utils.getSharedPrefsBoolean(sharedPreferences, Utils.locationOn));
+        locationSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(locationSwitch.isChecked()){
+                    Utils.insertSharedPrefs(Utils.locationOn, true, sharedPreferences);
+                    Intent intent = new Intent(getContext(), GeoFenceLocationService.class);
+                    getActivity().startService(intent);
+                }
+                else{
+                    Utils.insertSharedPrefs(Utils.locationOn, false, sharedPreferences);
+                    getActivity().stopService(new Intent(getContext(), GeoFenceLocationService.class));
+                }
+            }
+        });
         return rootView;
     }
 

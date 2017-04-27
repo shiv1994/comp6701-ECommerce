@@ -62,7 +62,8 @@ public class view_product_detail extends Fragment {
         descView.setText("Description: "+product.getLong_desc());
         Uri imageUri = Uri.parse(product.getImgRef());
         imgView.setImageBitmap(product.getBitmap());
-        ratingBarView.setRating((product.getAvg_rating().floatValue()));
+        ratingBarView.setEnabled(false);
+        ratingBarView.setRating(Float.parseFloat(Double.toString(product.getAvg_rating())));
 
         return view;
     }

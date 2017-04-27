@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.shivr.e_commerce.UI.coupon_list;
 import com.example.shivr.e_commerce.UI.map;
 import com.example.shivr.e_commerce.UI.settings;
 import com.example.shivr.e_commerce.UI.view_all_products;
@@ -56,7 +57,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         Fresco.initialize(this);
-
 
         setContentView(R.layout.activity_main);
 
@@ -98,6 +98,8 @@ public class MainActivity extends AppCompatActivity
             email.setText(googleSignInAccount.getEmail());
             userImage.setImageURI(googleSignInAccount.getPhotoUrl());
         }
+
+        determineIfNotificationCall();
     }
 
     @Override
@@ -170,10 +172,9 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setTitle("All Items");
             launchFragment(new view_all_products());
         }
-        if(id == R.id.nav_maps){
-            getSupportActionBar().setTitle("Map");
-//            startActivity(new Intent(this, MapsActivity.class));
-            launchFragment(new map());
+        if(id == R.id.nav_coupons){
+            getSupportActionBar().setTitle("Coupons");
+            launchFragment(new coupon_list());
         }
 
         if(id== R.id.nav_settings){
@@ -196,7 +197,7 @@ public class MainActivity extends AppCompatActivity
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
-                        Utils.insertSharedPrefsBool(Utils.signedInBoolKey, false, sharedPreferences);
+                        Utils.insertSharedPrefs(Utils.signedInBoolKey, false, sharedPreferences);
                         startActivity(new Intent(context, SignIn.class));
                     }
                 });
@@ -209,8 +210,15 @@ public class MainActivity extends AppCompatActivity
     private void launchFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .add(R.id.content_frame, fragment)
-                .addToBackStack("tag")
+                .replace(R.id.content_frame, fragment)
+//                .addToBackStack("tag")
+                .commit();
+    }
+
+    private void loadDefaultFragment(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, new view_all_products())
                 .commit();
     }
 
@@ -223,6 +231,7 @@ public class MainActivity extends AppCompatActivity
                     //Start service.
                     Intent intent = new Intent(this, GeoFenceLocationService.class);
                     startService(intent);
+                    Utils.insertSharedPrefs(Utils.locationOn, true, sharedPreferences);
                 }
                 else {
                     // permission denied, boo! Disable the
@@ -237,11 +246,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void checkPermissions(){
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.i("Connected!","Denied!");
+        if (ContextCompat.checkSelfPermission(getApplicationContext() , android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-                Log.i("Connected!","Denied!");
+                Log.i("Connected!","Denied! - Requesting Access");
                 //This is called if user has denied the permission before
                 //In this case I am just asking the permission again
                 ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
@@ -256,4 +264,25 @@ public class MainActivity extends AppCompatActivity
             startService(intent);
         }
     }
+
+    private void determineIfNotificationCall() {
+        Intent intent = getIntent();
+        if(intent!=null) {
+            String action = intent.getAction();
+            if (action != null) {
+                try {
+                    if (action.equalsIgnoreCase(getResources().getString(R.string.notification_coupon)))
+                        launchFragment(new coupon_list());
+                    else
+                        loadDefaultFragment();
+                } catch (Exception e) {
+                    Log.e("Error", "Problem consuming action from intent", e);
+                }
+            } else
+                loadDefaultFragment();
+        }
+        else
+            loadDefaultFragment();
+    }
+
 }

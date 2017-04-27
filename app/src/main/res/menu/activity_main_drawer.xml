@@ -8,9 +8,9 @@
             android:title="View All Items" />
 
         <item
-            android:id="@+id/nav_maps"
+            android:id="@+id/nav_coupons"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="View Store Location" />
+            android:title="View Coupons" />
     </group>
 
     <item android:title="User ">

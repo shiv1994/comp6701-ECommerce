@@ -2,10 +2,14 @@ package com.example.shivr.e_commerce;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.icu.text.DecimalFormat;
+import android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.gson.Gson;
+
+import java.util.ArrayList;
 
 /**
  * Created by shivr on 4/3/2017.
@@ -17,19 +21,34 @@ public class Utils {
     public static String signedInBoolKey = "signedIn";
     public static String userSelectedLocationEnable = "userSelectLocationEnable";
     public static String geoFencesSet = "getFencesSet";
+    public static String systemTimeMillis = "systemTimeMillis";
+    public static String locationOn = "locationOn";
+
+    public static Double latitude = 10.64104;
+    public static Double longtitude = -61.40047;
 
     public static SharedPreferences getSharedPrefs(Context context){
         return context.getSharedPreferences(sharedPrefKey, Context.MODE_PRIVATE);
     }
 
-    public static void insertSharedPrefsBool(String key, boolean signedIn, SharedPreferences sharedPreferences){
+    public static void insertSharedPrefs(Long time, String key ,SharedPreferences sharedPreferences){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putLong(key, time);
+        editor.apply();
+    }
+
+    public static void insertSharedPrefs(String key, boolean signedIn, SharedPreferences sharedPreferences){
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(key, signedIn);
         editor.apply();
     }
 
-    public static boolean checkBooleanSharedPrefs(SharedPreferences sharedPreferences, String key){
+    public static boolean getSharedPrefsBoolean(SharedPreferences sharedPreferences, String key){
         return sharedPreferences.getBoolean(key, false);
+    }
+
+    public static long getSharedPrefsLong(SharedPreferences sharedPreferences, String key){
+        return sharedPreferences.getLong(key, -1);
     }
 
     public static void saveUserInfo(GoogleSignInAccount googleSignInAccount, SharedPreferences sharedPreferences){

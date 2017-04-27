@@ -1,6 +1,6 @@
 package com.example.shivr.e_commerce;
 
-import android.content.Context;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,8 +18,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 
 public class SignIn extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener,
@@ -37,7 +34,7 @@ public class SignIn extends AppCompatActivity implements
 
         //Determining if user was logged in already and if so, the main screen will be displayed.
         sharedPreferences = Utils.getSharedPrefs(this);
-        if(Utils.checkBooleanSharedPrefs(sharedPreferences, Utils.signedInBoolKey)){
+        if(Utils.getSharedPrefsBoolean(sharedPreferences, Utils.signedInBoolKey)){
             this.finish();
             startActivity(new Intent(this, MainActivity.class));
         }
@@ -118,7 +115,7 @@ public class SignIn extends AppCompatActivity implements
         if (result.isSuccess()) {
             // Signed in successfully, update sign-in status and save user info and show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-            Utils.insertSharedPrefsBool(Utils.signedInBoolKey, true, sharedPreferences);
+            Utils.insertSharedPrefs(Utils.signedInBoolKey, true, sharedPreferences);
             Utils.saveUserInfo(acct, this.sharedPreferences);
             startActivity(new Intent(this, MainActivity.class));
             this.finish();
