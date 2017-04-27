@@ -107,7 +107,6 @@ public class view_all_products extends Fragment {
 
     public void onResume() {
         super.onResume();
-        getActivity().getActionBar().setTitle("All Products");
     }
 
 

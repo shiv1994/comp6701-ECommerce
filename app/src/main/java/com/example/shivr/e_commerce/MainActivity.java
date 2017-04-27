@@ -24,9 +24,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.shivr.e_commerce.UI.coupon_list;
+import com.example.shivr.e_commerce.UI.coupon_view;
 import com.example.shivr.e_commerce.UI.map;
 import com.example.shivr.e_commerce.UI.settings;
 import com.example.shivr.e_commerce.UI.view_all_products;
@@ -41,10 +40,8 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, view_all_products.OnFragmentInteractionListener, view_product_detail.OnFragmentInteractionListener, GoogleApiClient.ConnectionCallbacks, map.OnFragmentInteractionListener, settings.OnFragmentInteractionListener, coupon_list.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, view_all_products.OnFragmentInteractionListener, view_product_detail.OnFragmentInteractionListener, GoogleApiClient.ConnectionCallbacks, map.OnFragmentInteractionListener, settings.OnFragmentInteractionListener, coupon_view.OnFragmentInteractionListener {
 
-    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 1;
-    private static final int REQUEST_CODE = 101;
     private SharedPreferences sharedPreferences;
     private GoogleSignInAccount googleSignInAccount;
     private GoogleSignInOptions gso;
@@ -59,8 +56,6 @@ public class MainActivity extends AppCompatActivity
         Fresco.initialize(this);
 
         setContentView(R.layout.activity_main);
-
-        checkPermissions();
 
         sharedPreferences = Utils.getSharedPrefs(this.getApplicationContext());
 
@@ -92,6 +87,8 @@ public class MainActivity extends AppCompatActivity
 
         googleSignInAccount = Utils.getUserInfo(sharedPreferences);
 
+        checkPermissions();
+
         if (googleSignInAccount != null) {
             Log.i("Test GSO Object", "User Info" + googleSignInAccount.getEmail());
             name.setText(googleSignInAccount.getDisplayName());
@@ -100,6 +97,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         determineIfNotificationCall();
+
     }
 
     @Override
@@ -180,7 +178,7 @@ public class MainActivity extends AppCompatActivity
         }
         if(id == R.id.nav_coupons){
             getSupportActionBar().setTitle("Coupons");
-            launchFragment(new coupon_list());
+            launchFragment(new coupon_view());
         }
 
         if(id== R.id.nav_settings){
@@ -204,7 +202,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onResult(Status status) {
                         Utils.insertSharedPrefs(Utils.signedInBoolKey, false, sharedPreferences);
-                        startActivity(new Intent(context, SignIn.class));
+                        startActivity(new Intent(context, SignInActivity.class));
                     }
                 });
     }
@@ -229,47 +227,56 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.i("Permissions","Granted");
-                    //Start service.
-                    Intent intent = new Intent(this, GeoFenceLocationService.class);
-                    startService(intent);
-                    Utils.insertSharedPrefs(Utils.locationOn, true, sharedPreferences);
-                    Utils.makeShowSnackbar("Location Enabled.", getWindow().getDecorView().getRootView());
-                }
-                else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Utils.makeShowSnackbar("Location Disabled Due To Permissions.", getWindow().getDecorView().getRootView());
-                }
-                return;
-            }
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
-    }
+//    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+//        switch (requestCode) {
+//            case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    Log.i("Permissions","Granted");
+//                    //Start service.
+//                    Intent intent = new Intent(this, GeoFenceLocationService.class);
+//                    startService(intent);
+//                    Utils.insertSharedPrefs(Utils.locationOn, true, sharedPreferences);
+//                    Utils.makeShowSnackbar("Location Enabled.", getWindow().getDecorView().getRootView());
+//                }
+//                else {
+//                    // permission denied, boo! Disable the
+//                    // functionality that depends on this permission.
+//                    Utils.makeShowSnackbar("Location Disabled Due To Permissions.", getWindow().getDecorView().getRootView());
+//                }
+//                return;
+//            }
+//            // other 'case' lines to check for other
+//            // permissions this app might request
+//        }
+//    }
+
+//    private void checkPermissions(){
+//        if (ContextCompat.checkSelfPermission(getApplicationContext() , android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // Should we show an explanation?
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+//                Log.i("Connected!","Denied! - Requesting Access");
+//                //This is called if user has denied the permission before
+//                //In this case I am just asking the permission again
+//                ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+//            }
+//            else {
+//                ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+//            }
+//        }
+//        else {
+//            Log.i("Connected!","Granted!");
+//            Intent intent = new Intent(this, GeoFenceLocationService.class);
+//            startService(intent);
+//        }
+//    }
 
     private void checkPermissions(){
-        if (ContextCompat.checkSelfPermission(getApplicationContext() , android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-                Log.i("Connected!","Denied! - Requesting Access");
-                //This is called if user has denied the permission before
-                //In this case I am just asking the permission again
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
-            }
-            else {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
-            }
-        }
-        else {
-            Log.i("Connected!","Granted!");
+        if (ContextCompat.checkSelfPermission(getApplicationContext() , android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            //Start service.
             Intent intent = new Intent(this, GeoFenceLocationService.class);
             startService(intent);
+            Utils.insertSharedPrefs(Utils.locationOn, true, sharedPreferences);
         }
     }
 
@@ -281,9 +288,9 @@ public class MainActivity extends AppCompatActivity
                 Log.i("Action is",""+action);
                 try {
                     if (action.equals(Intent.ACTION_SEND))
-                        launchFragment(new coupon_list());
+                        launchFragment(new coupon_view());
                     else {
-                        loadDefaultFragment();
+//                        loadDefaultFragment();
                     }
                 }
                 catch (Exception e) {
@@ -291,11 +298,11 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             else {
-                loadDefaultFragment();
+//                loadDefaultFragment();
             }
         }
         else {
-            loadDefaultFragment();
+//            loadDefaultFragment();
         }
     }
 

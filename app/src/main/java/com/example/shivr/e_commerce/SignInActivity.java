@@ -3,8 +3,11 @@ package com.example.shivr.e_commerce;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,7 +22,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-public class SignIn extends AppCompatActivity implements
+public class SignInActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener{
 
@@ -27,6 +30,7 @@ public class SignIn extends AppCompatActivity implements
     private GoogleSignInOptions gso;
     private GoogleApiClient mGoogleApiClient;
     private SharedPreferences sharedPreferences;
+    private static final int REQUEST_CODE = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,8 @@ public class SignIn extends AppCompatActivity implements
                 .build();
 
         findViewById(R.id.sign_in_button).setOnClickListener(this);
+
+        checkPermissions();
     }
 
     @Override
@@ -121,6 +127,24 @@ public class SignIn extends AppCompatActivity implements
             this.finish();
         } else {
             // Signed out, show unauthenticated UI.
+        }
+    }
+
+    private void checkPermissions(){
+        if (ContextCompat.checkSelfPermission(getApplicationContext() , android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                Log.i("Checking!","Denied! - Requesting Access");
+                //This is called if user has denied the permission before
+                //In this case I am just asking the permission again
+                ActivityCompat.requestPermissions(SignInActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+            }
+            else {
+                ActivityCompat.requestPermissions(SignInActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+            }
+        }
+        else {
+            Log.i("Checking!","Granted!");
         }
     }
 }
