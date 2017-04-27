@@ -136,7 +136,8 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
             if (getFragmentManager().getBackStackEntryCount() > 0) {
                 getFragmentManager().popBackStack();
-            } else {
+            }
+            else {
                 super.onBackPressed();
             }
         } else {
@@ -215,8 +216,8 @@ public class MainActivity extends AppCompatActivity
     private void launchFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .add(R.id.content_frame, fragment)
-                .addToBackStack(null)
+                .replace(R.id.content_frame, fragment)
+                .addToBackStack("TAG")
                 .commit();
     }
 
@@ -277,11 +278,12 @@ public class MainActivity extends AppCompatActivity
         if(intent!=null) {
             String action = intent.getAction();
             if (action != null) {
+                Log.i("Action is",""+action);
                 try {
-                    if (action.equalsIgnoreCase(getResources().getString(R.string.notification_coupon)))
+                    if (action.equals(Intent.ACTION_SEND))
                         launchFragment(new coupon_list());
                     else {
-                        //loadDefaultFragment();
+                        loadDefaultFragment();
                     }
                 }
                 catch (Exception e) {
@@ -289,11 +291,11 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             else {
-                //loadDefaultFragment();
+                loadDefaultFragment();
             }
         }
         else {
-            //loadDefaultFragment();
+            loadDefaultFragment();
         }
     }
 

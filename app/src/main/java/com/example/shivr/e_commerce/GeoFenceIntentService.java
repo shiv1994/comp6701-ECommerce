@@ -61,7 +61,7 @@ public class GeoFenceIntentService extends IntentService{
             // Creates an Intent for the Activity
             Intent notifyIntent = new Intent(this, MainActivity.class);
             //Set the action for the pending intent.
-            notifyIntent.setAction(String.valueOf(R.string.notification_coupon));
+            notifyIntent.setAction(Intent.ACTION_SEND);
             // Sets the Activity to start in a new, empty task
             notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             // Creates the PendingIntent

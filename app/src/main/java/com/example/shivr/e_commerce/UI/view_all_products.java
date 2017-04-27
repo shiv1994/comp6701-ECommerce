@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.shivr.e_commerce.MainActivity;
 import com.example.shivr.e_commerce.Product;
 import com.example.shivr.e_commerce.ProductAdapter;
 import com.example.shivr.e_commerce.R;
@@ -78,7 +80,7 @@ public class view_all_products extends Fragment {
         // Required empty public constructor
     }
 
-    public static Fragment getInstance(){
+    public static Fragment getInstance(ActionBar actionBar){
         return new view_all_products();
     }
 
@@ -101,6 +103,11 @@ public class view_all_products extends Fragment {
                 }
             }
         }
+    }
+
+    public void onResume() {
+        super.onResume();
+        getActivity().getActionBar().setTitle("All Products");
     }
 
 
