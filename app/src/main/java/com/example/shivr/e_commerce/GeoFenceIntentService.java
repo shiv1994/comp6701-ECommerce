@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -50,6 +51,8 @@ public class GeoFenceIntentService extends IntentService{
     }
 
     protected void onHandleIntent(Intent intent) {
+
+            couponList = new ArrayList<>();
 
             GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
 
@@ -207,6 +210,7 @@ public class GeoFenceIntentService extends IntentService{
 
                     couponList.add(new Coupon(Jsoup.parse(id).text(), Double.parseDouble(disc), Jsoup.parse(desc).text()));
                 }
+                System.out.println(couponList);
                 getRandomCoupon();
 
                 Log.i(">>>",""+selectedCoupon.getDescription());
