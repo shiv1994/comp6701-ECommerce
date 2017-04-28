@@ -45,9 +45,9 @@ public class coupon_view extends Fragment {
         textViewCouponDesc = (TextView) rootView.findViewById(R.id.textViewCouponDesc);
         textViewCouponDiscount = (TextView) rootView.findViewById(R.id.textViewCouponAmountOff);
 
-        textViewCouponCode.setText(Utils.getSharedPrefString(sharedPreferences, Utils.couponCode));
+        textViewCouponCode.setText("Coupon Code: " + Utils.getSharedPrefString(sharedPreferences, Utils.couponCode));
         textViewCouponDesc.setText(Utils.getSharedPrefString(sharedPreferences, Utils.couponDesc));
-        textViewCouponDiscount.setText((Utils.getSharedPrefString(sharedPreferences, Utils.couponAmountOff)));
+        textViewCouponDiscount.setText("Percentage Off: " + (Utils.getSharedPrefString(sharedPreferences, Utils.couponAmountOff)) + "%");
         return rootView;
     }
 
