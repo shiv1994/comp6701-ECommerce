@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
@@ -26,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.shivr.e_commerce.UI.coupon_view;
+import com.example.shivr.e_commerce.UI.home;
 import com.example.shivr.e_commerce.UI.map;
 import com.example.shivr.e_commerce.UI.settings;
 import com.example.shivr.e_commerce.UI.view_all_products;
@@ -40,7 +40,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, view_all_products.OnFragmentInteractionListener, view_product_detail.OnFragmentInteractionListener, GoogleApiClient.ConnectionCallbacks, map.OnFragmentInteractionListener, settings.OnFragmentInteractionListener, coupon_view.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, view_all_products.OnFragmentInteractionListener, view_product_detail.OnFragmentInteractionListener, GoogleApiClient.ConnectionCallbacks, map.OnFragmentInteractionListener, settings.OnFragmentInteractionListener, coupon_view.OnFragmentInteractionListener, home.OnFragmentInteractionListener {
 
     private SharedPreferences sharedPreferences;
     private GoogleSignInAccount googleSignInAccount;
@@ -222,54 +222,9 @@ public class MainActivity extends AppCompatActivity
     private void loadDefaultFragment(){
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, new view_all_products())
+                .replace(R.id.content_frame, new home())
                 .commit();
     }
-
-
-//    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-//        switch (requestCode) {
-//            case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
-//                // If request is cancelled, the result arrays are empty.
-//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    Log.i("Permissions","Granted");
-//                    //Start service.
-//                    Intent intent = new Intent(this, GeoFenceLocationService.class);
-//                    startService(intent);
-//                    Utils.insertSharedPrefs(Utils.locationOn, true, sharedPreferences);
-//                    Utils.makeShowSnackbar("Location Enabled.", getWindow().getDecorView().getRootView());
-//                }
-//                else {
-//                    // permission denied, boo! Disable the
-//                    // functionality that depends on this permission.
-//                    Utils.makeShowSnackbar("Location Disabled Due To Permissions.", getWindow().getDecorView().getRootView());
-//                }
-//                return;
-//            }
-//            // other 'case' lines to check for other
-//            // permissions this app might request
-//        }
-//    }
-
-//    private void checkPermissions(){
-//        if (ContextCompat.checkSelfPermission(getApplicationContext() , android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // Should we show an explanation?
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-//                Log.i("Connected!","Denied! - Requesting Access");
-//                //This is called if user has denied the permission before
-//                //In this case I am just asking the permission again
-//                ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
-//            }
-//            else {
-//                ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
-//            }
-//        }
-//        else {
-//            Log.i("Connected!","Granted!");
-//            Intent intent = new Intent(this, GeoFenceLocationService.class);
-//            startService(intent);
-//        }
-//    }
 
     private void checkPermissions(){
         if (ContextCompat.checkSelfPermission(getApplicationContext() , android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -290,7 +245,7 @@ public class MainActivity extends AppCompatActivity
                     if (action.equals(Intent.ACTION_SEND))
                         launchFragment(new coupon_view());
                     else {
-//                        loadDefaultFragment();
+                        loadDefaultFragment();
                     }
                 }
                 catch (Exception e) {
@@ -298,12 +253,11 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             else {
-//                loadDefaultFragment();
+                loadDefaultFragment();
             }
         }
         else {
-//            loadDefaultFragment();
+            loadDefaultFragment();
         }
     }
-
 }

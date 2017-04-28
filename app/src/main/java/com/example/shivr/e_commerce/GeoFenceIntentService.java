@@ -3,7 +3,6 @@ package com.example.shivr.e_commerce;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -113,12 +112,11 @@ public class GeoFenceIntentService extends IntentService{
         }
 
         private Boolean checkTimeInterval(){
-//            Forcing all notifications to be delivered.
-//            if(System.currentTimeMillis() - Utils.getSharedPrefsLong(Utils.getSharedPrefs(getApplicationContext()),Utils.systemTimeMillis) >  86400000)
-//                return true;
-//            else
-//                return false;
-            return true;
+//          Notifications can be delivered only once every 24 hours.
+            if(System.currentTimeMillis() - Utils.getSharedPrefsLong(Utils.getSharedPrefs(getApplicationContext()),Utils.systemTimeMillis) >  86400000)
+                return true;
+            else
+                return false;
         }
 
     private class CouponRequestTask extends AsyncTask<Void, Void, String> {
